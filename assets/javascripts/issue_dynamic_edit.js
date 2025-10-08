@@ -70,6 +70,7 @@ const getEditFormHTML = function(attribute){
 		CF_ID = attribute.split("custom_field_values_")[1];
 		/* Is it a checkbox block ? */
 		formElement = document.querySelector('#issue_custom_field_values_' + CF_ID);
+		debugger;
 		if(formElement){
 			formElement = formElement.closest('.check_box_group');
 			is_checkboxes = CF_ID;
@@ -135,11 +136,11 @@ const cloneEditForm = function(){
 
 		let custom_field = false;
 		attributes.forEach(function(part, index, arr) {
-		  if(arr[index] === "progress") arr[index] = "done_ratio";
-		  if(arr[index].startsWith('cf_')) {
-		  	arr[index] = arr[index].replace('cf', 'custom_field_values');
-		  	custom_field = arr[index];
-		  }
+			if(arr[index] === "progress") arr[index] = "done_ratio";
+			if(arr[index].startsWith('cf_')) {
+				arr[index] = arr[index].replace('cf', 'custom_field_values');
+				custom_field = arr[index];
+			}
 		});
 
 		attributes = attributes.join(" ");
@@ -155,22 +156,22 @@ const cloneEditForm = function(){
 				elt.querySelector('.value').insertBefore(dynamicEditField, null);
 			}
 		}
-  	});
+	});
 
-  	// Specific Case : Description field
-  	if(!_CONF_EXCLUDED_FIELD_ID.includes("description") && document.querySelectorAll('div.issue.details .description').length){
+	// Specific Case : Description field
+	if(!_CONF_EXCLUDED_FIELD_ID.includes("description") && document.querySelectorAll('div.issue.details .description').length){
 		const btn_edit = document.createElement('span');
 		btn_edit.classList.add('iconEdit');
 		btn_edit.innerHTML = SVG_EDIT;
-  		document.querySelector('div.issue.details .description > p strong').insertAdjacentElement("afterend", btn_edit);
-  		const formDescription = getEditFormHTML("description");
-  		formDescription.querySelector("#issue_description_dynamic").removeAttribute('data-tribute');
-  		document.querySelector('div.issue.details .description').insertBefore(formDescription, null);
+		document.querySelector('div.issue.details .description > p strong').insertAdjacentElement("afterend", btn_edit);
+		const formDescription = getEditFormHTML("description");
+		formDescription.querySelector("#issue_description_dynamic").removeAttribute('data-tribute');
+		document.querySelector('div.issue.details .description').insertBefore(formDescription, null);
 
-  		if (
-				typeof(CKEDITOR) === "object" &&
-				typeof(CKEDITOR.instances['issue_description'] !== "undefined") &&
-				typeof(CKEDITOR.instances['issue_description'].getData) === typeof(Function)
+		if (
+			typeof(CKEDITOR) === "object" &&
+			typeof(CKEDITOR.instances['issue_description'] !== "undefined") &&
+			typeof(CKEDITOR.instances['issue_description'].getData) === typeof(Function)
 		) {
 			const cfg = CKEDITOR.instances['issue_description'].config;
 			cfg.height = 100;
@@ -178,31 +179,31 @@ const cloneEditForm = function(){
 		}else if (typeof(jsToolBar) === typeof(Function)) {
 			const DynamicDescriptionToolbar = new jsToolBar(document.querySelector('#issue_description_dynamic'));
 			DynamicDescriptionToolbar.setHelpLink('/help/en/wiki_syntax_common_mark.html');
-			DynamicDescriptionToolbar.setPreviewUrl('/issues/preview?issue_id=' + _ISSUE_ID + '&project_id=' + _PROJECT_ID); 
+			DynamicDescriptionToolbar.setPreviewUrl('/issues/preview?issue_id=' + _ISSUE_ID + '&project_id=' + _PROJECT_ID);
 			DynamicDescriptionToolbar.draw();
 		}
-  	}
+	}
 
-  	// Specific Case : Title field
-  	if(!_CONF_EXCLUDED_FIELD_ID.includes("subject")){
+	// Specific Case : Title field
+	if(!_CONF_EXCLUDED_FIELD_ID.includes("subject")){
 		const btn_edit = document.createElement('span');
 		btn_edit.classList.add('iconEdit');
 		btn_edit.innerHTML = SVG_EDIT;
 		document.querySelector('div.issue.details div.subject h3').insertBefore(btn_edit, null);
-  		const formTitle = getEditFormHTML("issue_subject");
-  		document.querySelector('div.issue.details div.subject').insertBefore(formTitle, null);
-  	}
+		const formTitle = getEditFormHTML("issue_subject");
+		document.querySelector('div.issue.details div.subject').insertBefore(formTitle, null);
+	}
 }
 
 /* Perform action on .value (display edit form) */
 document.querySelector('body').addEventListener(_CONF_LISTENER_TYPE_VALUE,
- 	function(e){
+	function(e){
 		let is_attribute = e.target.matches('div.issue.details .attributes .attribute .' + _CONF_LISTENER_TARGET) || e.target.closest('div.issue.details .attributes .attribute .' + _CONF_LISTENER_TARGET);
 		let is_description = e.target.matches('div.issue.details div.description > p') || e.target.closest('div.issue.details div.description > p');
 		let is_subject = e.target.matches('div.issue.details div.subject') || e.target.closest('div.issue.details div.subject');
 		if(is_attribute || is_description || is_subject ){
 			if(e.target.closest('.dynamicEditField')) return; /* We're already into a dynamic field, ignore */
-	 		document.querySelectorAll('.dynamicEditField').forEach(function(elt){ elt.classList.remove('open'); });
+			document.querySelectorAll('.dynamicEditField').forEach(function(elt){ elt.classList.remove('open'); });
 			if(!e.target.closest('a') && !e.target.closest('button')){
 				let selector = e.target.closest('.value');
 				if(is_description) selector = e.target.closest('.description');
@@ -210,7 +211,7 @@ document.querySelector('body').addEventListener(_CONF_LISTENER_TYPE_VALUE,
 				if(selector.querySelector('.dynamicEditField')) selector.querySelector('.dynamicEditField').classList.add('open');
 			}
 		}
-});
+	});
 
 /* Perform action on .iconEdit (display edit form) */
 document.querySelector('body').addEventListener(_CONF_LISTENER_TYPE_ICON, function(e){
@@ -234,11 +235,17 @@ document.querySelector('body').addEventListener('click', function(e){
 		let formData = [];
 		let existingIndex = [];
 		inputs.forEach(elt => {
+
 			let not_multiple = !elt.matches('input[type="radio"]') && !elt.matches('input[type="checkbox"]');
 			if(elt.matches('input[type="radio"]:checked') || elt.matches('input[type="checkbox"]:checked') || not_multiple){
 				if(!existingIndex.includes(elt.getAttribute('name'))){
 					existingIndex.push(elt.getAttribute('name'));
 					formData.push({"name" : elt.getAttribute('name'), "value" : elt.value})
+				}
+			}else if(elt.matches('input[type="checkbox"]')){
+				if(!existingIndex.includes(elt.getAttribute('name'))){
+					existingIndex.push(elt.getAttribute('name'));
+					formData.push({"name" : elt.getAttribute('name'), "value" : false})
 				}
 			}
 		});
@@ -265,16 +272,16 @@ document.querySelector('body').addEventListener('click', function(e){
 
 /* Listen on esc key press to close opened dialog box */
 document.onkeydown = function(evt) {
-    evt = evt || window.event;
-    let isEscape = false;
-    if ("key" in evt) {
-        isEscape = (evt.key === "Escape" || evt.key === "Esc");
-    } else {
-        isEscape = (evt.keyCode === 27);
-    }
-    if (isEscape) {
-        document.querySelectorAll('.dynamicEditField').forEach(function(elt){ elt.classList.remove('open'); });
-    }
+	evt = evt || window.event;
+	let isEscape = false;
+	if ("key" in evt) {
+		isEscape = (evt.key === "Escape" || evt.key === "Esc");
+	} else {
+		isEscape = (evt.keyCode === 27);
+	}
+	if (isEscape) {
+		document.querySelectorAll('.dynamicEditField').forEach(function(elt){ elt.classList.remove('open'); });
+	}
 };
 
 const checkVersion = function(callback){
@@ -312,9 +319,10 @@ const checkVersion = function(callback){
 let checkVersionInterval = false;
 let setCheckVersionInterval = function(activate){
 	if(!_CONF_CHECK_ISSUE_UPDATE_CONFLICT) return false;
+	console.log("Check version")
 	if(activate && !checkVersionInterval){
-		checkVersionInterval = window.setInterval(function(){ 
-			if(document.visibilityState === "visible") checkVersion(); 
+		checkVersionInterval = window.setInterval(function(){
+			if(document.visibilityState === "visible") checkVersion();
 		}, 5000);
 	} else {
 		clearInterval(checkVersionInterval);
@@ -336,6 +344,7 @@ let sendData = function(serialized_data){
 		let request = new XMLHttpRequest();
 		request.open('POST', LOCATION_HREF, true);
 		let formData = new FormData();
+		formData.append("lock_version", document.querySelector('#issue_lock_version').value)
 		params.forEach(data => formData.append(data.name, data.value));
 
 		let callError = function(msg){
@@ -350,10 +359,10 @@ let sendData = function(serialized_data){
 		}
 
 		request.onreadystatechange = function() {
-			if (this.readyState == 4) {
-				if(this.status == 200) {
+			if (this.readyState === 4) {
+				if(this.status === 200) {
 					const parser = new DOMParser();
-					const doc = parser.parseFromString(this.responseText, 'text/html');
+					let doc = parser.parseFromString(this.responseText, 'text/html');
 
 					let error = doc.querySelector("#errorExplanation");
 
@@ -392,7 +401,7 @@ let sendData = function(serialized_data){
 							document.querySelector('#tab-content-history').appendChild(doc.querySelector('#history .journal.has-details:last-child'));
 						}
 					}
-					
+
 					cloneEditForm();
 
 					//set datepicker fallback for input type date
@@ -418,6 +427,7 @@ let sendData = function(serialized_data){
 		request.send(formData);
 	}
 
+	debugger;
 	if(_CONF_CHECK_ISSUE_UPDATE_CONFLICT){
 		checkVersion(function(distant_version){
 			if(distant_version == document.querySelector('#issue_lock_version').value){
