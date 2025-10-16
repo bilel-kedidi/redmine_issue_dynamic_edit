@@ -9,7 +9,7 @@ body.controller-issues.action-show div.issue.details .value, body.controller-iss
 
 body.controller-issues.action-show .issue.details div.description,
 body.controller-issues.action-show .issue.details div.subject {
-
+	position: relative;
 }
 
 body.controller-issues.action-show .issue.details.no-cursor .value {
