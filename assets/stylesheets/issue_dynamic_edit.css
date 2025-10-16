@@ -4,7 +4,6 @@ body.controller-issues.action-show div.issue.details .value, body.controller-iss
 	overflow: visible;
 	position: relative;
 	cursor: pointer;
-	display: flex;
 	align-items: center;
 }
 
